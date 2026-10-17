@@ -49,6 +49,13 @@ import {
   // Audit logs
   getAuditLogsHandler,
 } from '@/controllers/admin.controller.js';
+// Verification (Issue #845)
+import {
+  adminListVerificationsHandler,
+  adminGetVerificationHandler,
+  adminReviewHandler,
+  adminRevokeBadgeHandler,
+} from '@/controllers/verification.controller.js';
 
 const router = Router();
 
@@ -106,6 +113,14 @@ router.get('/analytics/search/volume', requireScope('admin:analytics:read'), get
 // ── Audit log ─────────────────────────────────────────────────────────────────
 // Scope: admin:audit:read → admin, moderator, support, finance
 router.get('/audit-logs', requireScope('admin:audit:read'), getAuditLogsHandler);
+
+// ── Verification (Issue #845) ─────────────────────────────────────────────────
+// Scope: admin:verification:read  → admin, moderator
+// Scope: admin:verification:review → admin, moderator
+router.get('/verification/requests', requireScope('admin:verification:read'), adminListVerificationsHandler);
+router.get('/verification/requests/:id', requireScope('admin:verification:read'), adminGetVerificationHandler);
+router.post('/verification/requests/:id/review', requireScope('admin:verification:review'), adminReviewHandler);
+router.post('/verification/badges/:id/revoke', requireScope('admin:verification:review'), adminRevokeBadgeHandler);
 
 // ── Refund approval (finance) ─────────────────────────────────────────────────
 // Scope: admin:refunds:approve → admin, finance (HIGH-RISK — dual approval required)
