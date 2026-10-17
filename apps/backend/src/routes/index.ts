@@ -20,6 +20,8 @@ import reviewRoutes from './review.routes.js';
 import savedSearchRoutes from './savedSearch.routes.js';
 import policyRoutes from './policy.routes.js';
 import privacyRoutes from './privacy.routes.js';
+import verificationRoutes from './verification.routes.js';
+import consentRoutes from './consent.routes.js';
 
 const router = Router();
 
@@ -62,6 +64,8 @@ apiV1.use('/exchange-rates', exchangeRateRoutes);
 apiV1.use('/saved-searches', savedSearchRoutes);
 apiV1.use('/policy', policyRoutes);
 apiV1.use('/privacy', privacyRoutes);
+apiV1.use('/verification', verificationRoutes);
+apiV1.use('/consent', consentRoutes);
 apiV1.use(readinessRoutes);
 
 router.use('/api/v1', apiV1);

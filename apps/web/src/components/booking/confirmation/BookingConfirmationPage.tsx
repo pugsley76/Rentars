@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useBookingDetails } from '@/hooks/useBookingDetails';
 import { useEscrowStatus } from '@/hooks/useEscrowStatus';
 import EscrowStatusCard from './EscrowStatusCard';
+import TransactionTimeline from '@/components/booking/TransactionTimeline';
 import AddToCalendar from './AddToCalendar';
 import { Mail, Phone, Download } from 'lucide-react';
 import type { Property } from '@/types/property';
@@ -171,6 +172,9 @@ export default function BookingConfirmationPage({
           releaseDate={escrow.releaseDate}
         />
       )}
+
+      {/* Wallet transaction lifecycle (Issue #844) */}
+      <TransactionTimeline bookingId={bookingId} />
 
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Host Contact</h2>

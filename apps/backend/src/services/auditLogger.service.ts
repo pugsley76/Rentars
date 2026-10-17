@@ -91,7 +91,18 @@ export type AuditAction =
   | 'admin.session_revoke'
   | 'admin.settings_change'
   | 'admin.role_grant'
-  | 'admin.role_revoke';
+  | 'admin.role_revoke'
+  // Verification (Issue #845)
+  | 'verification.submit'
+  | 'verification.resubmit'
+  | 'verification.withdraw'
+  | 'verification.review_approved'
+  | 'verification.review_rejected'
+  | 'verification.review_needs_info'
+  | 'verification.expired'
+  | 'verification.disputed'
+  | 'verification.badge_granted'
+  | 'verification.badge_revoked';
 
 export type ResourceType =
   | 'user'

@@ -50,8 +50,19 @@ export interface FunnelEventPayload {
 /**
  * Returns true if the user has opted out of analytics.
  * Defaults to false (not opted out) if the preference row does not exist.
+ *
+ * @deprecated Use `hasConsent` from consent.service.ts for granular category
+ * checks. This function is retained for backwards compatibility and checks
+ * the legacy `user_analytics_preferences` table as well as the new
+ * `analytics_consent` table.
  */
 export async function isAnalyticsOptedOut(userId: string): Promise<boolean> {
+  // Check new granular consent system first (product_analytics category)
+  const { hasConsent } = await import('./consent.service.js');
+  const productConsent = await hasConsent(userId, 'product_analytics');
+  if (!productConsent) return true;
+
+  // Fall back to legacy opt-out table
   const { data } = await supabase
     .from('user_analytics_preferences')
     .select('opted_out')
@@ -108,6 +119,11 @@ function validateProperties(properties: Record<string, unknown>): boolean {
  * Fire-and-forget: awaiting this is optional.  It swallows all errors so
  * analytics failures never propagate to the caller.
  *
+ * Consent check (Issue #846): if a `user_id` is provided and the user has
+ * revoked consent for the relevant analytics category, the event is silently
+ * discarded. Required operational events (security, transaction records) are
+ * never affected by consent — those go through audit logging, not here.
+ *
  * @example
  * // In booking.service.ts, after status update succeeds:
  * void emitFunnelEvent({
@@ -120,6 +136,19 @@ function validateProperties(properties: Record<string, unknown>): boolean {
 export async function emitFunnelEvent(payload: FunnelEventPayload): Promise<void> {
   try {
     if (!validateProperties(payload.properties)) return;
+
+    // ── Consent check (Issue #846) ────────────────────────────────────────────
+    // If a user_id is provided, verify they have consented to product_analytics.
+    // Events without a user_id (anonymous/unauthenticated) are still emitted —
+    // they carry only a pseudonymous session_id, never PII.
+    if (payload.user_id) {
+      const { hasConsent } = await import('./consent.service.js');
+      const consented = await hasConsent(payload.user_id, 'product_analytics');
+      if (!consented) {
+        // User has revoked consent — silently discard the event.
+        return;
+      }
+    }
 
     const { error } = await supabase.from('funnel_events').insert({
       event: payload.event,

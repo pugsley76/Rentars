@@ -33,6 +33,7 @@ import {
 } from '@/validators/booking.validator.js';
 import { env } from '@/config/env.js';
 import { validatePagination } from '@/validators/pagination.validator.js';
+import { getTransactionHistory } from '@/controllers/transactionHistory.controller.js';
 
 const router = Router();
 
@@ -61,6 +62,9 @@ router.get('/:id', authenticate, getBooking);
 
 // GET /api/v1/bookings/:id/status-history
 router.get('/:id/status-history', authenticate, getBookingStatusHistory);
+
+// GET /api/v1/bookings/:id/transactions — wallet transaction timeline (Issue #844)
+router.get('/:id/transactions', authenticate, getTransactionHistory);
 
 // GET /api/v1/bookings/:id/calendar.ics
 router.get('/:id/calendar.ics', authenticate, getBookingCalendar);

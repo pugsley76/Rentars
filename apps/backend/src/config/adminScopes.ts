@@ -41,6 +41,9 @@ export type AdminScope =
   // Dispute management
   | 'admin:disputes:read'
   | 'admin:disputes:resolve'   // HIGH-RISK: financial settlement
+  // Verification (Issue #845)
+  | 'admin:verification:read'
+  | 'admin:verification:review'
   // Audit logs
   | 'admin:audit:read'
   // Rate limits
@@ -75,6 +78,8 @@ export const ROLE_SCOPES: Record<AdminRole, AdminScope[]> = {
     'admin:bookings:read',
     'admin:disputes:read',
     'admin:disputes:resolve',
+    'admin:verification:read',
+    'admin:verification:review',
     'admin:audit:read',
     'admin:ratelimits:read',
     'admin:refunds:approve',
@@ -91,6 +96,8 @@ export const ROLE_SCOPES: Record<AdminRole, AdminScope[]> = {
     'admin:bookings:read',
     'admin:disputes:read',
     'admin:disputes:resolve',
+    'admin:verification:read',
+    'admin:verification:review',
     'admin:audit:read',
   ],
   support: [
